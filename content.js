@@ -193,7 +193,7 @@
         loadingDiv.style.borderRadius = '5px';
         document.body.appendChild(loadingDiv);
   
-        const response = await fetch('https://sahibinden-backend-production.up.railway.app/api/cars/evaluate', {
+        const response = await fetch('http://localhost:5000/api/cars/evaluate', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

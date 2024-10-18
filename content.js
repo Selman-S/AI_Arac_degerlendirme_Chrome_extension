@@ -1,6 +1,14 @@
 (() => {
   // Constants
-  const BACKEND_BASE_URL = 'https://sahibinden-backend-production.up.railway.app/api';
+  let BACKEND_BASE_URL;
+  const ortam ="prod"
+  if (ortam=="dev") {
+    
+    BACKEND_BASE_URL = 'http://localhost:5000/api';
+  }else if (ortam=="prod") {
+    
+    BACKEND_BASE_URL = 'https://sahibinden-backend-production.up.railway.app/api';
+  }
   const EVALUATE_BUTTON_ID = 'evaluateCarButton';
   const EVALUATION_TABLE_ID = 'evaluationResultTable';
   const STYLE_ID = 'customStyles';
@@ -323,9 +331,7 @@ function displayEvaluationResult(data, carData) {
 
   const tableRows = [
     createTableRow(
-      `<strong>Marka / Seri / Model:</strong> ${carData.Marka || ''} / ${carData.Seri || ''} / ${
-        carData.Model || ''
-      }`
+      `<strong>Marka / Seri / Model / Yıl:</strong> ${carData.Marka || ''} / ${carData.Seri || ''} / ${   carData.Model || ''}/ ${   carData.Yıl || ''}`
     ),
     createTableRow(`<strong>Benzer Araç Sayısı:</strong> ${data.similarCount || 0}`),
     createTableRow(`<strong>Ortalama Fiyat:</strong> ${formattedAveragePrice}`),
@@ -380,7 +386,8 @@ function displayEvaluationResult(data, carData) {
 
       showNotification('Kaydetmeye başladı', 'info');
       const result = await saveCarData(cars);
-
+      console.log(result);
+      
       if (result) {
         showNotification(result.message, 'success');
         processPriceHistories(result.data, rowCarMap);

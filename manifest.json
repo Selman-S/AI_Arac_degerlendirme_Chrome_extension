@@ -3,7 +3,7 @@
     "name": "ChatGPT Araç Değerlendirme",
     "description": "Aracın detay sayfasında 'Aracı Değerlendir' butonu ekler ve ChatGPT ile değerlendirme yapar.",
     "version": "1.0",
-    "permissions": ["scripting", "activeTab"],
+    "permissions": ["scripting", "activeTab", "tabs", "storage"],
     "host_permissions": ["*://*.sahibinden.com/*"],
     "content_scripts": [
       {

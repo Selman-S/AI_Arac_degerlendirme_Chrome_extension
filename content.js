@@ -82,70 +82,96 @@
   }
 
   // Inject custom styles into the page
-  function injectStyles() {
-    if (document.getElementById(STYLE_ID)) return;
+// injectStyles fonksiyonunu güncelliyoruz
+function injectStyles() {
+  if (document.getElementById(STYLE_ID)) return;
 
-    const styles = `
-      .evaluate-btn {
-        padding: 10px 20px;
-        background-color: #1890ff;
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 16px;
-        margin-bottom: 12px;
-      }
-      #${EVALUATION_TABLE_ID} {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 20px;
-      }
-      #${EVALUATION_TABLE_ID} th,
-      #${EVALUATION_TABLE_ID} td {
-        border: 1px solid #ccc;
-        padding: 8px;
-        text-align: left;
-        font-size: 14px;
-      }
-      #${EVALUATION_TABLE_ID} th {
-        background-color: #f2f2f2;
-      }
-      .notification {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        color: #fff;
-        padding: 15px;
-        z-index: 9999;
-        border-radius: 4px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-      }
-      .notification-success {
-        background-color: #4caf50;
-      }
-      .notification-error {
-        background-color: #f44336;
-      }
-      .notification-info {
-        background-color: #2196f3;
-      }
-      .tooltip {
-        position: absolute;
-        background-color: #333;
-        color: #fff;
-        padding: 5px 10px;
-        border-radius: 4px;
-        z-index: 1000;
-        font-size: 12px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-      }
-    `;
-    const styleElement = document.createElement('style');
-    styleElement.id = STYLE_ID;
-    styleElement.textContent = styles;
-    document.head.appendChild(styleElement);
-  }
+  const styles = `
+    .evaluate-btn {
+      padding: 10px 20px;
+      background-color: #1890ff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+    #${EVALUATION_TABLE_ID} {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    #${EVALUATION_TABLE_ID} th,
+    #${EVALUATION_TABLE_ID} td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+      font-size: 14px;
+    }
+    #${EVALUATION_TABLE_ID} th {
+      background-color: #f2f2f2;
+    }
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      color: #fff;
+      padding: 15px;
+      z-index: 9999;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    .notification-success {
+      background-color: #4caf50;
+    }
+    .notification-error {
+      background-color: #f44336;
+    }
+    .notification-info {
+      background-color: #2196f3;
+    }
+    .tooltip {
+      position: absolute;
+      background-color: #fff;
+      color: #333;
+      padding: 8px 12px;
+      border-radius: 4px;
+      z-index: 1000;
+      font-size: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      border: 1px solid #ccc;
+      max-width: 200px;
+    }
+    .tooltip-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .tooltip-item:last-child {
+      margin-bottom: 0;
+    }
+    .tooltip-date {
+      flex: 1;
+    }
+    .tooltip-price {
+      flex: 1;
+      text-align: right;
+      margin-left: 8px;
+    }
+    .price-up {
+      color: red;
+    }
+    .price-down {
+      color: green;
+    }
+  `;
+  const styleElement = document.createElement('style');
+  styleElement.id = STYLE_ID;
+  styleElement.textContent = styles;
+  document.head.appendChild(styleElement);
+}
+
 
   // Create the "Evaluate Car" button element
   function createEvaluateButton() {
@@ -204,6 +230,9 @@
       if (techDetailsElement?.innerHTML) {
         carData.techDetails = parseTechDetails(techDetailsElement.innerHTML);
       }
+if (document.querySelector('#classifiedDescription')&&document.querySelector('#classifiedDescription').innerText.length>0) {
+  carData.detailText=  document.querySelector('#classifiedDescription').innerText.replaceAll("\n","-")
+}
 
       const priceElement = document.querySelector('.classified-price-wrapper');
       if (priceElement) {
@@ -384,17 +413,20 @@ function displayEvaluationResult(data, carData) {
         }
       });
 
-      showNotification('Kaydetmeye başladı', 'info');
+      // showNotification('Kaydetmeye başladı', 'info');
+      console.log('Kaydetmeye başladı');
       const result = await saveCarData(cars);
       console.log(result);
       
       if (result) {
-        showNotification(result.message, 'success');
+      
+        
+        // showNotification(result.message, 'success');
         processPriceHistories(result.data, rowCarMap);
       }
     } catch (error) {
       console.error('processListingPage error:', error);
-      showNotification('Sayfa işlenirken bir hata oluştu.', 'error');
+      // showNotification('Sayfa işlenirken bir hata oluştu.', 'error');
     }
   }
 
@@ -548,52 +580,64 @@ function displayEvaluationResult(data, carData) {
       return data;
     } catch (error) {
       console.error('saveCarData error:', error);
-      showNotification('Veri gönderilirken bir hata oluştu.', 'error');
+      // showNotification('Veri gönderilirken bir hata oluştu.', 'error');
       return null;
     }
   }
 
   // Process price histories and update the UI
-  function processPriceHistories(carDataList, rowCarMap) {
-    carDataList.forEach((item) => {
-      const { carData } = item;
-      const { priceHistory, adId } = carData;
-      const row = rowCarMap.get(adId);
+function processPriceHistories(carDataList, rowCarMap) {
+  carDataList.forEach((item) => {
+    const { carData } = item;
+    const { priceHistory, adId } = carData;
+    const row = rowCarMap.get(adId);
 
-      if (row && priceHistory && priceHistory.length > 0) {
-        const firstPrice = priceHistory[0].price;
-        const lastPrice = priceHistory[priceHistory.length - 1].price;
+    if (row && priceHistory && priceHistory.length > 0) {
+      const firstPrice = priceHistory[0].price;
+      const lastPrice = priceHistory[priceHistory.length - 1].price;
 
-        if (firstPrice !== lastPrice) {
-          const priceDifference = ((lastPrice - firstPrice) / firstPrice) * 100;
-          const priceCell = row.querySelector('.searchResultsPriceValue');
+      if (firstPrice !== lastPrice) {
+        const priceDifference = ((lastPrice - firstPrice) / firstPrice) * 100;
+        const priceCell = row.querySelector('.searchResultsPriceValue');
 
-          console.log(carData);
-          
+        const differenceElement = document.createElement('div');
+        differenceElement.style.fontSize = '12px';
+        differenceElement.style.fontWeight = 'bold';
+        differenceElement.style.color = priceDifference < 0 ? 'green' : 'red';
+        differenceElement.innerText = `${Math.abs(priceDifference.toFixed(2))}% ${
+          priceDifference < 0 ? '↓' : '↑'
+        }`;
+        priceCell.appendChild(differenceElement);
 
-          const differenceElement = document.createElement('div');
-          differenceElement.style.fontSize = '12px';
-          differenceElement.style.fontWeight = 'bold';
-          differenceElement.style.color = priceDifference < 0 ? 'green' : 'red';
-          differenceElement.innerText = `${priceDifference.toFixed(2)}% ${
-            priceDifference < 0 ? '↓' : '↑'
-          }`;
-          priceCell.appendChild(differenceElement);
+        // Tooltip için fiyat geçmişini hazırlama
+        const tooltipData = [];
 
-          const tooltipData = priceHistory
-            .map(
-              (item) =>
-                `${new Date(item.updatedAt).toLocaleDateString('tr-TR')}: ${item.price.toLocaleString()} TL`
-            )
-            .join('\n');
+        for (let i = 0; i < priceHistory.length; i++) {
+          const item = priceHistory[i];
+          const date = new Date(item.updatedAt).toLocaleDateString('tr-TR');
+          const price = item.price.toLocaleString() + ' TL';
 
-          priceCell.addEventListener('mouseenter', () => {
-            showTooltip(priceCell, tooltipData);
-          });
+          let trend = '';
+          if (i > 0) {
+            const previousPrice = priceHistory[i - 1].price;
+            if (item.price > previousPrice) {
+              trend = 'up';
+            } else if (item.price < previousPrice) {
+              trend = 'down';
+            }
+          }
+
+          tooltipData.push({ date, price, trend });
         }
+
+        priceCell.addEventListener('mouseenter', (e) => {
+          showTooltip(priceCell, tooltipData, e);
+        });
       }
-    });
-  }
+    }
+  });
+}
+
 
   // Show a notification message
   function showNotification(message, type = 'info') {
@@ -607,26 +651,56 @@ function displayEvaluationResult(data, carData) {
     }, NOTIFICATION_DURATION);
   }
 
-  // Show a tooltip with given message
-  function showTooltip(element, message) {
-    const tooltip = document.createElement('div');
-    tooltip.className = 'tooltip';
-    tooltip.textContent = message;
-    document.body.appendChild(tooltip);
+// Show a tooltip with given message
+function showTooltip(element, data, event) {
+  const tooltip = document.createElement('div');
+  tooltip.className = 'tooltip';
 
-    const moveTooltip = (e) => {
-      tooltip.style.left = e.pageX + 10 + 'px';
-      tooltip.style.top = e.pageY + 10 + 'px';
-    };
+  data.forEach((item) => {
+    const itemDiv = document.createElement('div');
+    itemDiv.className = 'tooltip-item';
 
-    element.addEventListener('mousemove', moveTooltip);
+    const dateSpan = document.createElement('span');
+    dateSpan.className = 'tooltip-date';
+    dateSpan.innerText = item.date;
 
-    const removeTooltip = () => {
-      tooltip.remove();
-      element.removeEventListener('mousemove', moveTooltip);
-      element.removeEventListener('mouseleave', removeTooltip);
-    };
+    const priceSpan = document.createElement('span');
+    priceSpan.className = 'tooltip-price';
+    priceSpan.innerText = item.price;
 
-    element.addEventListener('mouseleave', removeTooltip);
-  }
+    if (item.trend === 'up') {
+      priceSpan.classList.add('price-up');
+      priceSpan.innerHTML += ' ↑';
+    } else if (item.trend === 'down') {
+      priceSpan.classList.add('price-down');
+      priceSpan.innerHTML += ' ↓';
+    }
+
+    itemDiv.appendChild(dateSpan);
+    itemDiv.appendChild(priceSpan);
+    tooltip.appendChild(itemDiv);
+  });
+
+  document.body.appendChild(tooltip);
+
+  const moveTooltip = (e) => {
+    tooltip.style.left = e.pageX + 10 + 'px';
+    tooltip.style.top = e.pageY + 10 + 'px';
+  };
+
+  element.addEventListener('mousemove', moveTooltip);
+
+  const removeTooltip = () => {
+    tooltip.remove();
+    element.removeEventListener('mousemove', moveTooltip);
+    element.removeEventListener('mouseleave', removeTooltip);
+  };
+
+  element.addEventListener('mouseleave', removeTooltip);
+
+  // Tooltip'i ilk konumlandırma
+  tooltip.style.left = event.pageX + 10 + 'px';
+  tooltip.style.top = event.pageY + 10 + 'px';
+}
+
 })();

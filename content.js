@@ -124,19 +124,21 @@
         cursor: pointer;
         font-size: 30px;
         z-index: 10000;
+        box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
       }
       #chatbotWindow {
-        position: fixed;
-        bottom: 80px;
-        right: 20px;
-        width: 390px;
-        max-height: 400px;
-        background-color: #fff;  
-        border: 1px solid #ccc;
-        border-radius: 10px;
-        display: none;
-        flex-direction: column;
-        z-index: 10000;
+           position: fixed;
+    bottom: 80px;
+    right: 20px;
+    width: 390px;
+    max-height: 600px;
+    min-height: 400px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    display: none;
+    flex-direction: column;
+    z-index: 10000;
       }
       #chatbotHeader {
         background-color: #ffe800;
